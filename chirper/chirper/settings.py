@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
+import json
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -18,6 +19,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
+
+with open('secrets.json') as f:
+    secrets = json.loads(f.read())
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'a+!@5o0s23996+kve=w+624nre*ljxfkf)x!r_il3vhky#7b69'
@@ -127,3 +131,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Get 
+TWITTER_CONSUMER_KEY = secrets['TWITTER_CONSUMER_KEY']
+TWITTER_CONSUMER_SECRET = secrets['TWITTER_CONSUMER_SECRET']
+TWITTER_ACCESS_TOKEN_KEY = secrets['TWITTER_ACCESS_TOKEN_KEY']
+TWITTER_ACCESS_TOKEN_SECRET = secrets['TWITTER_ACCESS_TOKEN_KEY']
