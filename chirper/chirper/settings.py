@@ -33,12 +33,7 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
-THIRD_PARTY_APPS = [
-    'rest_framework',
-]
-
-
-DJANGO_APPS = [
+DEFAULT_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,7 +42,15 @@ DJANGO_APPS = [
     'django.contrib.staticfiles',
 ]
 
-INSTALLED_APPS = THIRD_PARTY_APPS + DJANGO_APPS
+THIRD_PARTY_APPS = [
+    'rest_framework',
+]
+
+LOCAL_APPS = [
+    'core',
+]
+
+INSTALLED_APPS = DEFAULT_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -136,4 +139,4 @@ STATIC_URL = '/static/'
 TWITTER_CONSUMER_KEY = secrets['TWITTER_CONSUMER_KEY']
 TWITTER_CONSUMER_SECRET = secrets['TWITTER_CONSUMER_SECRET']
 TWITTER_ACCESS_TOKEN_KEY = secrets['TWITTER_ACCESS_TOKEN_KEY']
-TWITTER_ACCESS_TOKEN_SECRET = secrets['TWITTER_ACCESS_TOKEN_KEY']
+TWITTER_ACCESS_TOKEN_SECRET = secrets['TWITTER_ACCESS_TOKEN_SECRET']
