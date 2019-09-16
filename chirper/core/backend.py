@@ -15,6 +15,29 @@ class Twitter(object):
         # Verify credentials
         self.__user = self._verify_credentials()
 
+    def _parse_hashtags(self, hashtags):
+        return [hashtag.text for hashtag in hashtags]
+
+    def _parse_tweets(self, tweets):
+        response = []
+        for tweet in tweets:
+            user = tweet.user
+            hashtags = self._parse_hashtags(tweet.hashtags)
+            data = {
+                'account': {
+                    'fullname': user.name,
+                    'id': user.id,
+                    'url': user.url,
+                },
+                'date': tweet.created_at,
+                'hashtags': hashtags,
+                'retweets': tweet.retweet_count,
+                'text': tweet.text,
+                'favorites': tweet.favorite_count
+            }
+            response.append(data)
+        return response
+
     def _verify_credentials(self):
         return self.twitter.VerifyCredentials()
 
@@ -25,7 +48,9 @@ class Twitter(object):
         )
 
     def get_tweets_by_hashtags(self, hashtag, count=30):
-        return self.twitter.GetSearch(
+        tweets = self.twitter.GetSearch(
             term=hashtag,
             count=count,
         )
+
+        return self._parse_tweets(tweets)
