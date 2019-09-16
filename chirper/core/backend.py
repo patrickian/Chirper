@@ -42,10 +42,12 @@ class Twitter(object):
         return self.twitter.VerifyCredentials()
 
     def get_user_tweets(self, screen_name, count=30):
-        return self.twitter.GetUserTimeline(
+        tweets = self.twitter.GetUserTimeline(
             screen_name=screen_name,
             count=count,
         )
+
+        return self._parse_tweets(tweets)
 
     def get_tweets_by_hashtags(self, hashtag, count=30):
         tweets = self.twitter.GetSearch(
