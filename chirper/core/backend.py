@@ -43,7 +43,7 @@ class Twitter(object):
 
     def get_user_tweets(self, screen_name, count=30):
         tweets = self.twitter.GetUserTimeline(
-            screen_name=screen_name,
+            screen_name='@{}'.format(screen_name),
             count=count,
         )
 
@@ -51,7 +51,7 @@ class Twitter(object):
 
     def get_tweets_by_hashtags(self, hashtag, count=30):
         tweets = self.twitter.GetSearch(
-            term=hashtag,
+            term='#{}'.format(hashtag),
             count=count,
         )
 
