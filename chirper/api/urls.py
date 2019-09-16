@@ -5,8 +5,14 @@ from .views import UserTweetListAPIView
 
 
 urlpatterns = [
-    path('hashtags/<hashtag>/',
-        HashtagTweetListAPIView.as_view(), name='hashtag'),
-    path('users/<user>/',
-        UserTweetListAPIView.as_view(), name='hashtag')
+    path(
+        'hashtags/<hashtag>/',
+        HashtagTweetListAPIView.as_view(),
+        name='hashtag'
+    ),
+    path(
+        'users/<user>/',
+        UserTweetListAPIView.as_view(),
+        name='user'
+    ),
 ]

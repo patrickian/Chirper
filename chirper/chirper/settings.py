@@ -135,7 +135,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# Twitter credentials 
+# Twitter credentials
 TWITTER_CONSUMER_KEY = secrets['TWITTER_CONSUMER_KEY']
 TWITTER_CONSUMER_SECRET = secrets['TWITTER_CONSUMER_SECRET']
 TWITTER_ACCESS_TOKEN_KEY = secrets['TWITTER_ACCESS_TOKEN_KEY']
