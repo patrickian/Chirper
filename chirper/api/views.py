@@ -9,9 +9,11 @@ class HashtagTweetListAPIView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, hashtag):
+        limit = request.GET.get('limit', 30)
         twitter = Twitter()
 
-        return Response(twitter.get_tweets_by_hashtags(hashtag))
+        return Response(twitter.get_tweets_by_hashtags(
+            hashtag, limit))
 
 
 class UserTweetListAPIView(APIView):
@@ -19,6 +21,8 @@ class UserTweetListAPIView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request, user):
+        limit = request.GET.get('limit', 30)
         twitter = Twitter()
         
-        return Response(twitter.get_user_tweets(user))
+        return Response(twitter.get_user_tweets(
+            user, limit))
