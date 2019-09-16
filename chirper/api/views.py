@@ -10,7 +10,7 @@ class HashtagTweetListAPIView(APIView):
 
     def get(self, request, hashtag):
         twitter = Twitter()
-        
+
         return Response(twitter.get_tweets_by_hashtags(hashtag))
 
 
