@@ -12,3 +12,13 @@ class HashtagTweetListAPIView(APIView):
         twitter = Twitter()
         
         return Response(twitter.get_tweets_by_hashtags(hashtag))
+
+
+class UserTweetListAPIView(APIView):
+    
+    permission_classes = [AllowAny]
+
+    def get(self, request, user):
+        twitter = Twitter()
+        
+        return Response(twitter.get_user_tweets(user))
