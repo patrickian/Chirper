@@ -1,4 +1,5 @@
 # Chirper
+Birds also chirp other than tweet!!<br/>
 RESTFUL APIs that retrieves tweets from twitter using Twitter API.
 
 ## How to run the project
