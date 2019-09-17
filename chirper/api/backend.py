@@ -93,7 +93,7 @@ class Twitter(object):
                 'retweets': tweet['retweet_count']
             }
             response.append(data)
-    
+
         return response
 
     def _retrieve_tweets(self, path, parameters):
@@ -109,7 +109,7 @@ class Twitter(object):
         response = self.__session.get(url, auth=self.__auth)
 
         # Raise error if the status code is not 200
-        if response.status_code != 200:
+        if not response.ok:
             response.raise_for_status()
 
         # Retrieves response data
