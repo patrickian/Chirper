@@ -1,4 +1,7 @@
-import twitter
+import requests
+
+from requests_oauthlib import OAuth1
+from urllib.parse import urlencode
 
 from django.conf import settings
 
@@ -9,23 +12,49 @@ class Twitter(object):
     Handles basic requests for tweets based from
     user and hashtags and parsing of tweets.
     """
-    def __init__(self):
-        self.twitter = twitter.Api(
-            consumer_key=settings.TWITTER_CONSUMER_KEY,
-            consumer_secret=settings.TWITTER_CONSUMER_SECRET,
-            access_token_key=settings.TWITTER_ACCESS_TOKEN_KEY,
-            access_token_secret=settings.TWITTER_ACCESS_TOKEN_SECRET,
-        )
-        # Verify credentials
-        self.__user = self._verify_credentials()
 
-    def _parse_hashtags(self, hashtags):
+    BASE_URL = 'https://api.twitter.com/1.1'
+    SEARCH_PATH_URL = '/search/tweets.json'
+    USER_PATH_URL = '/statuses/user_timeline.json'
+
+    def __init__(self):
+        self.__session = requests.Session()
+        self.__auth = OAuth1(
+            settings.TWITTER_CONSUMER_KEY,
+            settings.TWITTER_CONSUMER_SECRET,
+            settings.TWITTER_ACCESS_TOKEN_KEY,
+            settings.TWITTER_ACCESS_TOKEN_SECRET,
+        )
+
+    def get_user_tweets(self, screen_name, count=30):
+        """
+        Retrieves user based tweets.Returns a list of tweets.
+        """
+        parameters = {
+            'screen_name': '@{}'.format(screen_name),
+            'count': count
+        }
+
+        return self._retrieve_tweets(self.USER_PATH_URL, parameters)
+
+    def get_tweets_by_hashtags(self, hashtag, count=30):
+        """
+        Retrieves hashtag based tweets.Returns a list of tweets.
+        """
+        parameters = {
+            'q': '#{}'.format(hashtag),
+            'count': count
+        }
+
+        return self._retrieve_tweets(self.SEARCH_PATH_URL, parameters)
+
+    def _parse_response_hashtags(self, hashtags):
         """
         Parse Hashtag objects and returns list of hashtags as text.
         """
-        return [hashtag.text for hashtag in hashtags]
+        return [hashtag['text'] for hashtag in hashtags]
 
-    def _parse_tweets(self, tweets):
+    def _parse_response_tweets(self, tweets):
         """
         Returns a list of tweets parsed as dictionary.
         :example:
@@ -47,46 +76,43 @@ class Twitter(object):
         ]
         """
         response = []
+
         for tweet in tweets:
-            user = tweet.user
-            hashtags = self._parse_hashtags(tweet.hashtags)
+            user = tweet['user']
+            hashtags = tweet['entities']['hashtags']
             data = {
+                'favorites': tweet['favorite_count'],
                 'account': {
-                    'fullname': user.name,
-                    'id': user.id,
-                    'url': user.url,
+                    'fullname': user['name'],
+                    'href': '/{}'.format(user['screen_name']),
+                    'id': user['id']
                 },
-                'date': tweet.created_at,
-                'hashtags': hashtags,
-                'retweets': tweet.retweet_count,
-                'text': tweet.text,
-                'favorites': tweet.favorite_count
+                'date': tweet['created_at'],
+                'text': tweet['text'],
+                'hashtags': self._parse_response_hashtags(hashtags),
+                'retweets': tweet['retweet_count']
             }
             response.append(data)
+    
         return response
 
-    def _verify_credentials(self):
-        """Verify credentials and returns User object."""
-        return self.twitter.VerifyCredentials()
-
-    def get_user_tweets(self, screen_name, count=30):
+    def _retrieve_tweets(self, path, parameters):
         """
-        Retrieves user based tweets.Returns a list of tweets.
+        Generic request for requesting tweets in Twitter API.
+        Returns a parsed list for tweets.
         """
-        tweets = self.twitter.GetUserTimeline(
-            screen_name='@{}'.format(screen_name),
-            count=count,
+        url = '{}{}?{}'.format(
+            self.BASE_URL,
+            path,
+            urlencode(parameters)
         )
+        response = self.__session.get(url, auth=self.__auth)
 
-        return self._parse_tweets(tweets)
+        if response.status_code != 200:
+            response.raise_for_status()
 
-    def get_tweets_by_hashtags(self, hashtag, count=30):
-        """
-        Retrieves hashtag based tweets.Returns a list of tweets.
-        """
-        tweets = self.twitter.GetSearch(
-            term='#{}'.format(hashtag),
-            count=count,
-        )
+        tweets = response.json()
+        if isinstance(tweets, dict):
+            tweets = data['statuses']
 
-        return self._parse_tweets(tweets)
+        return self._parse_response_tweets(tweets)
