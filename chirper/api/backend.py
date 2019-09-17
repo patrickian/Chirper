@@ -108,11 +108,13 @@ class Twitter(object):
         )
         response = self.__session.get(url, auth=self.__auth)
 
+        # Raise error if the status code is not 200
         if response.status_code != 200:
             response.raise_for_status()
 
+        # Retrieves response data
         tweets = response.json()
         if isinstance(tweets, dict):
-            tweets = data['statuses']
+            tweets = tweets['statuses']
 
         return self._parse_response_tweets(tweets)
