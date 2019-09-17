@@ -73,3 +73,6 @@ Example response:
    ...
 ] 
 ```
+
+## Running Test
+You can run the following command to run unit tests: `python manage.py test api.tests.TwitterTestCase`
